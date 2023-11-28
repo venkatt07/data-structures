@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+// Function to find the missing element in the array
+int findMissingElement(int arr[], int n) {
+    // Calculate the expected sum of elements in the range 1 to N
+    int expectedSum = (n + 1) * (n + 2) / 2;
+
+    // Calculate the actual sum of the given array
+    int actualSum = 0;
+    for (int i = 0; i < n; i++) {
+        actualSum += arr[i];
+    }
+
+    // Return the missing element
+    return expectedSum - actualSum;
+}
+
+int main() {
+    int arr[] = {1, 2, 4, 6, 3, 7, 8};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    // Find and print the missing element
+    int missingElement = findMissingElement(arr, n);
+    printf("The missing element is: %d\n", missingElement);
+
+    return 0;
+}
