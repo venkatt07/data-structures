@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_VERTICES 100
+
+typedef struct {
+    int vertices[MAX_VERTICES];
+    int edges[MAX_VERTICES][MAX_VERTICES];
+    int numVertices;
+    int numEdges;
+} Graph;
+
+typedef struct {
+    int data[MAX_VERTICES];
+    int front, rear;
+} Queue;
+
+void initializeGraph(Graph *graph, int numVertices) {
+    graph->numVertices = numVertices;
+    graph->numEdges = 0;
+
+    for (int i = 0; i < MAX_VERTICES; i++) {
+        graph->vertices[i] = 0;
+
+        for (int j = 0; j < MAX_VERTICES; j++) {
+            graph->edges[i][j] = 0;
+        }
+    }
+}
+
+void addEdge(Graph *graph, int start, int end) {
+    graph->edges[start][end] = 1;
+    graph->edges[end][start] = 1;
+    graph->numEdges++;
+}
+
+int bfs(Graph *graph, int start, int end) {
+    Queue queue;
+    int visited[MAX_VERTICES] = {0};
+
+    queue.front = -1;
+    queue.rear = -1;
+
+    visited[start] = 1;
+    queue.data[++queue.rear] = start;
+
+    int level = 0;
+
+    while (queue.front != queue.rear) {
+        int current = queue.data[++queue.front];
+
+        for (int i = 0; i < graph->numVertices; i++) {
+            if (graph->edges[current][i] == 1 && !visited[i]) {
+                visited[i] = 1;
+                queue.data[++queue.rear] = i;
+
+                // If we reached the target vertex, return the current level
+                if (i == end) {
+                    return level;
+                }
+            }
+        }
+
+        level++;
+    }
+
+    // If the end vertex is not reachable from the start vertex
+    return INT_MAX;
+}
+
+int main() {
+    Graph graph;
+    int numVertices, numEdges, start, end;
+
+    printf("Enter the number of vertices: ");
+    scanf("%d", &numVertices);
+
+    initializeGraph(&graph, numVertices);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &numEdges);
+
+    printf("Enter the edges (format: start end):\n");
+    for (int i = 0; i < numEdges; i++) {
+        int u, v;
+        scanf("%d %d", &u, &v);
+        addEdge(&graph, u, v);
+    }
+
+    printf("Enter the start and end vertices of the even pair: ");
+    scanf("%d %d", &start, &end);
+
+    int minEdges = bfs(&graph, start, end);
+
+    if (minEdges == INT_MAX) {
+        printf("No path found between the given even pair.\n");
+    } else {
+        printf("Minimum number of edges between even pair: %d\n", minEdges);
+    }
+
+    return 0;
+}
