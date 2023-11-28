@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <string.h>
+
+void findFrequency(char str[]) {
+    int frequency[256] = {0}; // Assuming ASCII characters
+
+    // Traverse the string and update the frequency array
+    for (int i = 0; i < strlen(str); i++) {
+        frequency[(int)str[i]]++;
+    }
+
+    // Display the frequency of each character
+    printf("Character frequencies:\n");
+    for (int i = 0; i < 256; i++) {
+        if (frequency[i] > 0) {
+            printf("'%c' occurs %d times\n", (char)i, frequency[i]);
+        }
+    }
+}
+
+int main() {
+    char str[100];
+
+    // Input the string
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin);
+
+    // Remove the newline character from the input
+    str[strcspn(str, "\n")] = '\0';
+
+    // Find and print the frequency of characters
+    findFrequency(str);
+
+    return 0;
+}
