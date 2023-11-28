@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define a structure for the stack node
+struct StackNode {
+    int data;
+    struct StackNode* next;
+};
+
+// Define a structure for the MinStack
+struct MinStack {
+    struct StackNode* stack;
+    struct StackNode* minStack; // Additional stack to keep track of minimum elements
+};
+
+// Function to create a new stack node
+struct StackNode* createNode(int value) {
+    struct StackNode* newNode = (struct StackNode*)malloc(sizeof(struct StackNode));
+    newNode->data = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to initialize the MinStack
+struct MinStack* createMinStack() {
+    struct MinStack* minStack = (struct MinStack*)malloc(sizeof(struct MinStack));
+    minStack->stack = NULL;
+    minStack->minStack = NULL;
+    return minStack;
+}
+
+// Function to push an element onto the stack
+void push(struct MinStack* minStack, int value) {
+    // Push onto the main stack
+    struct StackNode* newNode = createNode(value);
+    newNode->next = minStack->stack;
+    minStack->stack = newNode;
+
+    // Push onto the minStack only if it's empty or the new value is smaller than the current minimum
+    if (minStack->minStack == NULL || value <= minStack->minStack->data) {
+        struct StackNode* minNode = createNode(value);
+        minNode->next = minStack->minStack;
+        minStack->minStack = minNode;
+    }
+}
+
+// Function to pop an element from the stack
+void pop(struct MinStack* minStack) {
+    if (minStack->stack == NULL) {
+        printf("Stack underflow. Cannot pop.\n");
+        return;
+    }
+
+    // Pop from the main stack
+    struct StackNode* temp = minStack->stack;
+    minStack->stack = minStack->stack->next;
+    free(temp);
+
+    // Pop from the minStack if the top element is the minimum
+    if (temp->data == minStack->minStack->data) {
+        temp = minStack->minStack;
+        minStack->minStack = minStack->minStack->next;
+        free(temp);
+    }
+}
+
+// Function to get the top element of the stack
+int top(struct MinStack* minStack) {
+    if (minStack->stack == NULL) {
+        printf("Stack is empty.\n");
+        return -1; // Error value for an empty stack
+    }
+
+    return minStack->stack->data;
+}
+
+// Function to retrieve the minimum element in the stack
+int getMin(struct MinStack* minStack) {
+    if (minStack->minStack == NULL) {
+        printf("Stack is empty.\n");
+        return -1; // Error value for an empty stack
+    }
+
+    return minStack->minStack->data;
+}
+
+int main() {
+    struct MinStack* minStack = createMinStack();
+
+    push(minStack, 3);
+    push(minStack, 5);
+    printf("Top element: %d\n", top(minStack));   // Output: 5
+    printf("Minimum element: %d\n", getMin(minStack)); // Output: 3
+
+    push(minStack, 2);
+    push(minStack, 1);
+    printf("Minimum element: %d\n", getMin(minStack)); // Output: 1
+
+    pop(minStack);
+    printf("Top element: %d\n", top(minStack));   // Output: 2
+    printf("Minimum element: %d\n", getMin(minStack)); // Output: 2
+
+    return 0;
+}
