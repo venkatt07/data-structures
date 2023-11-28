@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define a structure for a linked list node
+struct ListNode {
+    int data;
+    struct ListNode* next;
+};
+
+// Function to create a new node with given data
+struct ListNode* createNode(int data) {
+    struct ListNode* newNode = (struct ListNode*)malloc(sizeof(struct ListNode));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to print the linked list in reverse order using recursion
+void printReverseRecursive(struct ListNode* head) {
+    if (head == NULL) {
+        return;
+    }
+
+    printReverseRecursive(head->next);
+    printf("%d -> ", head->data);
+}
+
+// Function to print the linked list in reverse order using a stack
+void printReverseUsingStack(struct ListNode* head) {
+    // Create a stack to store the elements
+    struct ListNode* stack = NULL;
+
+    // Push elements onto the stack
+    while (head != NULL) {
+        struct ListNode* temp = createNode(head->data);
+        temp->next = stack;
+        stack = temp;
+        head = head->next;
+    }
+
+    // Pop and print elements from the stack
+    while (stack != NULL) {
+        printf("%d -> ", stack->data);
+        struct ListNode* temp = stack;
+        stack = stack->next;
+        free(temp);
+    }
+}
+
+int main() {
+    // Creating a sample linked list: 1 -> 2 -> 3 -> 4 -> 5
+    struct ListNode* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
+
+    printf("Original Linked List: ");
+    struct ListNode* current = head;
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+
+    printf("\nLinked List in Reverse Order (Using Recursion): ");
+    printReverseRecursive(head);
+    printf("NULL\n");
+
+    printf("\nLinked List in Reverse Order (Using Stack): ");
+    printReverseUsingStack(head);
+    printf("NULL\n");
+
+    // Free the memory allocated for the linked list
+    current = head;
+    struct ListNode* next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+
+    return 0;
+}
