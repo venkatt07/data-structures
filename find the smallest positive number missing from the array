@@ -1,0 +1,49 @@
+#include <stdio.h>
+
+// Function to find the smallest positive number missing from the array
+int findSmallestPositive(int arr[], int n) {
+    // Separate positive and non-positive numbers
+    int positiveIndex = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] > 0) {
+            // Swap positive numbers to the left
+            int temp = arr[i];
+            arr[i] = arr[positiveIndex];
+            arr[positiveIndex] = temp;
+            positiveIndex++;
+        }
+    }
+
+    // Consider only positive numbers
+    int positiveSize = n - positiveIndex;
+
+    for (int i = positiveIndex; i < n; i++) {
+        int index = abs(arr[i]) - 1;
+
+        // If the index is within the range of positiveSize, mark the corresponding element as negative
+        if (index >= 0 && index < positiveSize) {
+            arr[index] = -abs(arr[index]);
+        }
+    }
+
+    // Find the first positive number's index
+    for (int i = 0; i < positiveSize; i++) {
+        if (arr[i] > 0) {
+            return i + 1;
+        }
+    }
+
+    // If all positive numbers from 1 to positiveSize are present, return positiveSize + 1
+    return positiveSize + 1;
+}
+
+int main() {
+    int arr[] = {3, 4, -1, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    int result = findSmallestPositive(arr, n);
+
+    printf("The smallest positive number missing is: %d\n", result);
+
+    return 0;
+}
