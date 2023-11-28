@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define a node structure for the binary search tree
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Function to create a new node
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a node into the BST
+struct Node* insert(struct Node* root, int key) {
+    if (root == NULL) {
+        return createNode(key);
+    }
+
+    if (key < root->data) {
+        root->left = insert(root->left, key);
+    } else if (key > root->data) {
+        root->right = insert(root->right, key);
+    }
+
+    return root;
+}
+
+// Function to perform in-order traversal and find the kth smallest element
+void kthSmallestUtil(struct Node* root, int k, int* count, int* result) {
+    if (root != NULL) {
+        // Traverse the left subtree
+        kthSmallestUtil(root->left, k, count, result);
+
+        // Process the current node
+        (*count)++;
+        if (*count == k) {
+            *result = root->data;
+            return;
+        }
+
+        // Traverse the right subtree
+        kthSmallestUtil(root->right, k, count, result);
+    }
+}
+
+// Function to find the kth smallest element in the BST
+int kthSmallest(struct Node* root, int k) {
+    int count = 0;
+    int result = -1;
+
+    kthSmallestUtil(root, k, &count, &result);
+
+    return result;
+}
+
+int main() {
+    struct Node* root = NULL;
+
+    // Insert elements into the BST
+    root = insert(root, 50);
+    insert(root, 30);
+    insert(root, 20);
+    insert(root, 40);
+    insert(root, 70);
+    insert(root, 60);
+    insert(root, 80);
+
+    // Input the value of k
+    int k;
+    printf("Enter the value of k: ");
+    scanf("%d", &k);
+
+    // Find and print the kth smallest element
+    int kthElement = kthSmallest(root, k);
+    
+    if (kthElement != -1) {
+        printf("The %dth smallest element in the BST is: %d\n", k, kthElement);
+    } else {
+        printf("Invalid value of k or k is out of range.\n");
+    }
+
+    return 0;
+}
