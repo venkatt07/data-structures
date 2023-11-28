@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+// Define a structure for the stack
+struct Stack {
+    char* array;
+    int top;
+};
+
+// Function to initialize the stack
+struct Stack* createStack(int size) {
+    struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+    stack->array = (char*)malloc(size * sizeof(char));
+    stack->top = -1;
+    return stack;
+}
+
+// Function to check if the stack is empty
+bool isEmpty(struct Stack* stack) {
+    return (stack->top == -1);
+}
+
+// Function to push an element onto the stack
+void push(struct Stack* stack, char value) {
+    stack->array[++stack->top] = value;
+}
+
+// Function to pop an element from the stack
+char pop(struct Stack* stack) {
+    return stack->array[stack->top--];
+}
+
+// Function to check if the input string is valid
+bool isValid(char* s) {
+    int size = strlen(s);
+    struct Stack* stack = createStack(size);
+
+    for (int i = 0; i < size; i++) {
+        char current = s[i];
+        if (current == '(' || current == '{' || current == '[') {
+            push(stack, current);
+        } else {
+            if (isEmpty(stack)) {
+                free(stack->array);
+                free(stack);
+                return false; // Unmatched closing bracket
+            }
+
+            char topElement = pop(stack);
+
+            // Check if the closing bracket matches the corresponding opening bracket
+            if ((current == ')' && topElement != '(') ||
+                (current == '}' && topElement != '{') ||
+                (current == ']' && topElement != '[')) {
+                free(stack->array);
+                free(stack);
+                return false;
+            }
+        }
+    }
+
+    // Check if there are unmatched opening brackets
+    bool result = isEmpty(stack);
+
+    // Free the memory allocated for the stack
+    free(stack->array);
+    free(stack);
+
+    return result;
+}
+
+int main() {
+    char input[100];
+
+    // Input the string
+    printf("Enter a string containing '(', ')', '{', '}', '[', and ']': ");
+    fgets(input, sizeof(input), stdin);
+
+    // Remove the newline character from the input
+    input[strcspn(input, "\n")] = '\0';
+
+    // Check if the input string is valid
+    if (isValid(input)) {
+        printf("The input string is valid.\n");
+    } else {
+        printf("The input string is not valid.\n");
+    }
+
+    return 0;
+}
