@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define a structure for a linked list node
+struct ListNode {
+    int val;
+    struct ListNode* next;
+};
+
+// Function to create a new node with given value
+struct ListNode* createNode(int value) {
+    struct ListNode* newNode = (struct ListNode*)malloc(sizeof(struct ListNode));
+    newNode->val = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to reverse the nodes of a linked list from position left to right
+struct ListNode* reverseBetween(struct ListNode* head, int left, int right) {
+    if (head == NULL || left == right) {
+        return head;
+    }
+
+    // Create a dummy node to simplify the code
+    struct ListNode* dummy = createNode(0);
+    dummy->next = head;
+    struct ListNode* pre = dummy;
+
+    // Move to the node just before the reverse portion
+    for (int i = 1; i < left; i++) {
+        pre = pre->next;
+    }
+
+    // Reverse the nodes in the range [left, right]
+    struct ListNode* current = pre->next;
+    struct ListNode* next = NULL;
+    struct ListNode* prev = NULL;
+
+    for (int i = 0; i <= right - left; i++) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+
+    // Connect the reversed portion back to the original list
+    pre->next->next = current;
+    pre->next = prev;
+
+    return dummy->next;
+}
+
+// Function to print the linked list
+void printLinkedList(struct ListNode* head) {
+    struct ListNode* current = head;
+
+    while (current != NULL) {
+        printf("%d -> ", current->val);
+        current = current->next;
+    }
+
+    printf("NULL\n");
+}
+
+// Function to free the memory allocated for the linked list
+void freeLinkedList(struct ListNode* head) {
+    struct ListNode* current = head;
+    struct ListNode* next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main() {
+    // Creating a sample linked list: 1 -> 2 -> 3 -> 4 -> 5
+    struct ListNode* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
+
+    printf("Original Linked List: ");
+    printLinkedList(head);
+
+    // Reverse nodes from position 2 to 4
+    head = reverseBetween(head, 2, 4);
+
+    printf("Linked List after reversal: ");
+    printLinkedList(head);
+
+    // Free the memory allocated for the linked list
+    freeLinkedList(head);
+
+    return 0;
+}
