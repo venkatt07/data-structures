@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+// Function to calculate the factorial of a number
+unsigned long long calculateFactorial(int n) {
+    if (n < 0) {
+        printf("Please enter a non-negative integer.\n");
+        return -1; // Error value for negative input
+    }
+
+    unsigned long long factorial = 1;
+
+    for (int i = 1; i <= n; i++) {
+        factorial *= i;
+    }
+
+    return factorial;
+}
+
+int main() {
+    int num;
+
+    // Input the number for which factorial needs to be calculated
+    printf("Enter a non-negative integer: ");
+    scanf("%d", &num);
+
+    // Calculate and print the factorial of the number
+    unsigned long long result = calculateFactorial(num);
+
+    if (result != -1) {
+        printf("Factorial of %d is: %llu\n", num, result);
+    }
+
+    return 0;
+}
